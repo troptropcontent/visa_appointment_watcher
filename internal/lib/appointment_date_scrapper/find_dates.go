@@ -12,7 +12,6 @@ import (
 
 	"github.com/go-rod/rod"
 	"github.com/go-rod/rod/lib/launcher"
-	"github.com/google/uuid"
 	"github.com/rs/zerolog"
 	"github.com/troptropcontent/visa_appointment_watcher/internal/config"
 )
@@ -76,23 +75,22 @@ func findCurrentDate(page *rod.Page) (time.Time, error) {
 	return time.Time{}, errors.New("no date found")
 }
 
-func newLogger(scraper_process_id string) (*zerolog.Logger, error) {
+func newLogger(watcher_process_id string) (*zerolog.Logger, error) {
 	log_file, err := os.OpenFile(LOG_FILE, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
 		return nil, err
 	}
-	logger := zerolog.New(log_file).With().Timestamp().Caller().Str("scraper_process_id", scraper_process_id).Logger()
+	logger := zerolog.New(log_file).With().Timestamp().Caller().Str("watcher_process_id", watcher_process_id).Logger()
 
 	return &logger, nil
 }
 
 // FindDates triggers the scraping process to find the current and next appointment date. It follows the steps of a user browsing the visa website and find the dates in the browser.
-func FindDates() (current_date time.Time, next_date time.Time, err error) {
+func FindDates(watcher_process_id string) (current_date time.Time, next_date time.Time, err error) {
 	username := config.MustGet("username")
 	password := config.MustGet("password")
 
-	scraper_process_id := uuid.New()
-	logger, _ := newLogger(scraper_process_id.String())
+	logger, _ := newLogger(watcher_process_id)
 
 	logger.Info().Msg("Starting the scrapper")
 
