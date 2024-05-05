@@ -1,0 +1,7 @@
+# Env files
+.devcontainer/.env
+.env
+
+# Logs
+logs/*
+
