@@ -40,3 +40,24 @@ func MustGet(key string) string {
 	}
 	return value
 }
+
+// Set sets the value of a config key, it returns an error if it fails
+func Set(key string, value string) error {
+	config := Config{}
+	DB.Limit(1).Find(&config, "key = ?", key)
+	if config.ID == 0 {
+		config.Key = key
+		config.Value = value
+		return DB.Save(&config).Error
+	}
+	config.Value = value
+	return DB.Save(&config).Error
+}
+
+// MustSet sets the value of a config key, it panics if it fails
+func MustSet(key string, value string) {
+	err := Set(key, value)
+	if err != nil {
+		panic(err)
+	}
+}
