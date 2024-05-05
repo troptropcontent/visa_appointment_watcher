@@ -91,7 +91,12 @@ func startWatcher() *time.Ticker {
 	appointment_date_ticker := time.NewTicker(45 * time.Second)
 	go func() {
 		for ; ; <-appointment_date_ticker.C {
-			err := scrapAndNotify()
+			watcher_should_run, err := config.Get("watcher_running")
+			if err != nil || watcher_should_run == "false" {
+				log.Info().Msg("Watcher is not running, not scraping appointment dates")
+				continue
+			}
+			err = scrapAndNotify()
 			if err != nil {
 				log.Error().Msg(err.Error())
 			}
