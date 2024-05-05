@@ -97,6 +97,10 @@ func FindDates() (current_date time.Time, next_date time.Time, err error) {
 	logger.Info().Msg("Starting the scrapper")
 
 	browser := setupBrowser(&next_date, logger)
+	defer func() {
+		logger.Info().Msg("Closing the browser")
+		browser.Close()
+	}()
 
 	logger.Info().Msg("Browser setup complete")
 	logger.Info().Msg("Navigating to login page")
@@ -109,7 +113,7 @@ func FindDates() (current_date time.Time, next_date time.Time, err error) {
 
 	current_url := page.MustInfo().URL
 	if current_url != "https://ais.usvisa-info.com/en-fr/niv/users/sign_in" {
-		errMessage := "Failed to reach the login page"
+		errMessage := "failed to reach the login page, current url: " + current_url
 		logger.Error().Msg(errMessage)
 		return time.Time{}, time.Time{}, errors.New(errMessage)
 	}
