@@ -1,18 +1,18 @@
 package main
 
 import (
+	"crypto/subtle"
 	"flag"
-	"os"
+	"net/http"
 	"time"
 
-	"github.com/google/uuid"
-	"github.com/rs/zerolog"
-	"github.com/rs/zerolog/log"
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	"github.com/troptropcontent/visa_appointment_watcher/internal/config"
-	"github.com/troptropcontent/visa_appointment_watcher/internal/lib/appointment_date_scrapper"
+	watcher_handler "github.com/troptropcontent/visa_appointment_watcher/internal/handler/watcher"
+	"github.com/troptropcontent/visa_appointment_watcher/internal/lib/watcher"
+	"github.com/troptropcontent/visa_appointment_watcher/internal/views"
 )
-
-const WATCHER_LOG_FILE = "logs/watcher.log"
 
 func mustGetAllParamsInFlags() (string, string, string) {
 	username := flag.String("username", "", "your username")
@@ -31,100 +31,40 @@ func mustGetAllParamsInFlags() (string, string, string) {
 	return *username, *password, *alert_phone_number
 }
 
-func scrapeAppointmentDates(watcher_process_id string) (current_date time.Time, next_date time.Time, err error) {
-	current_date, next_date, err = appointment_date_scrapper.FindDates(watcher_process_id)
-	if err != nil {
-		return time.Time{}, time.Time{}, err
-	}
-	return current_date, next_date, nil
-}
-
-func shouldNotify(current_date, next_date time.Time, watcher_logger *zerolog.Logger) bool {
-	watcher_logger.Info().Msg("Checking if current date is before next date : " + current_date.Format("02-01-2006") + " < " + next_date.Format("02-01-2006"))
-	if current_date.Before(next_date) {
-		watcher_logger.Info().Msg("Current date is before next date, not sending alert")
-		return false
-	}
-
-	last_alert_sent_for_appointment_date_at, err := config.Get("last_alert_sent_for_appointment_date_at")
-	if err != nil {
-		return false
-	}
-
-	is_next_appointment_date_already_notified := last_alert_sent_for_appointment_date_at == next_date.Format("02-01-2006")
-
-	if is_next_appointment_date_already_notified {
-		watcher_logger.Info().Msg("Next appointment date have already been notified, not sending alert")
-		return false
-	}
-	watcher_logger.Info().Msg("Next appointment date have not been notified, sending alert")
-	return true
-}
-
-func notify(current_date, next_date time.Time, watcher_logger *zerolog.Logger) error {
-	_, err := config.Get("alert_phone_number")
-	if err != nil {
-		return err
-	}
-
-	message := "Hello Amigo, an earlier appointment date is available on " + next_date.Format("02-01-2006") + " (for now your appointment is scheduled on " + current_date.Format("02-01-2006") + ")"
-	watcher_logger.Info().Msg("About to send the following message: " + message)
-	// Twillio stuff will go here
-
-	config.Set("last_alert_sent_for_appointment_date_at", next_date.Format("02-01-2006"))
-	return nil
-}
-
-func scrapAndNotify(watcher_logger *zerolog.Logger, watcher_process_id string) error {
-	watcher_logger.Info().Msg("Scraping appointment dates")
-	current_date, next_date, err := scrapeAppointmentDates(watcher_process_id)
-	if err != nil {
-		watcher_logger.Error().Msg("Failed to scrape appointment dates: " + err.Error())
-		return err
-	}
-
-	watcher_logger.Info().Msg("Checking if we should notify")
-	should_notify := shouldNotify(current_date, next_date, watcher_logger)
-
-	if should_notify {
-		return notify(current_date, next_date, watcher_logger)
-	}
-	return nil
-}
-
-func newWatcherLogger(watcher_process_id string) (*zerolog.Logger, error) {
-	log_file, err := os.OpenFile(WATCHER_LOG_FILE, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
-	if err != nil {
-		return nil, err
-	}
-	logger := zerolog.New(log_file).With().Timestamp().Caller().Str("watcher_process_id", watcher_process_id).Logger()
-
-	return &logger, nil
-}
-
-func startWatcher() *time.Ticker {
+func startWatcherTicker() *time.Ticker {
 	appointment_date_ticker := time.NewTicker(45 * time.Second)
 	go func() {
 		for ; ; <-appointment_date_ticker.C {
-			watcher_process_id := uuid.New()
-			watcher_logger, err := newWatcherLogger(watcher_process_id.String())
-			if err != nil {
-				log.Info().Msg("Failed to create watcher logger: " + err.Error())
-				continue
-			}
-			watcher_logger.Info().Msg("Watcher starting")
-			watcher_should_run, err := config.Get("watcher_running")
-			if err != nil || watcher_should_run == "false" {
-				watcher_logger.Info().Msg("Watcher is not running, not scraping appointment dates")
-				continue
-			}
-			err = scrapAndNotify(watcher_logger, watcher_process_id.String())
-			if err != nil {
-				watcher_logger.Error().Msg(err.Error())
-			}
+			w := watcher.New()
+			w.Run()
 		}
 	}()
 	return appointment_date_ticker
+}
+
+func createServer() *echo.Echo {
+	e := echo.New()
+	e.Use(middleware.Logger())
+	e.Use(middleware.Recover())
+	return e
+}
+
+func authMiddleware() echo.MiddlewareFunc {
+	return middleware.BasicAuth(func(username, password string, c echo.Context) (bool, error) {
+		username_in_config, err := config.Get("username")
+		if err != nil {
+			return false, nil
+		}
+		password_in_config, err := config.Get("password")
+		if err != nil {
+			return false, nil
+		}
+		if subtle.ConstantTimeCompare([]byte(username), []byte(username_in_config)) == 1 &&
+			subtle.ConstantTimeCompare([]byte(password), []byte(password_in_config)) == 1 {
+			return true, nil
+		}
+		return false, nil
+	})
 }
 
 func main() {
@@ -136,9 +76,21 @@ func main() {
 	config.MustSetIfNotExists("alert_phone_number", alert_phone_number)
 	config.MustSetIfNotExists("last_alert_sent_for_appointment_date_at", "")
 
-	watcher := startWatcher()
-	defer watcher.Stop()
+	watcherTicker := startWatcherTicker()
+	defer watcherTicker.Stop()
 
-	time.Sleep(120 * time.Second)
-	watcher.Stop()
+	server := createServer()
+
+	server.Renderer = views.NewRenderer()
+
+	// Health check
+	server.GET("/up", func(c echo.Context) error {
+		return c.String(http.StatusOK, "ok")
+	})
+
+	// Watcher web
+	watcher_web := server.Group("/watcher")
+	watcher_web.Use(authMiddleware())
+	watcher_web.GET("", watcher_handler.Show)
+	server.Start(":3000")
 }

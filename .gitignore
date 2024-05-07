@@ -8,3 +8,7 @@ logs/*
 # Database
 storage/*.db
 
+# Playground
+
+cmd/playground/*
+
