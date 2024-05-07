@@ -74,14 +74,6 @@ func (s *Scrapper) FindDates() (err error) {
 		return errors.New(errMessage)
 	}
 
-	page.MustTakeScreenshot(struct {
-		Path     string
-		FullPage bool
-	}{
-		Path:     "screenshots/login.png",
-		FullPage: true,
-	})
-
 	s.Logger.Info().Msg("Login page reached")
 	s.Logger.Info().Msg("Filling the login form")
 
@@ -91,28 +83,12 @@ func (s *Scrapper) FindDates() (err error) {
 	page.MustFindElement("input[type='submit']").MustClick()
 	page.MustWaitStable()
 
-	page.MustTakeScreenshot(struct {
-		Path     string
-		FullPage bool
-	}{
-		Path:     "screenshots/loging_in.png",
-		FullPage: true,
-	})
-
 	regex := regexp.MustCompile(`https://ais.usvisa-info.com/en-fr/niv/groups/\d+`)
 	if current_url := page.URL(); !regex.MatchString(current_url) {
 		errMessage := "next page not reached, login might have failed, credentials might be incorrect"
 		s.Logger.Error().Msg(errMessage)
 		return errors.New(errMessage)
 	}
-
-	page.MustTakeScreenshot(struct {
-		Path     string
-		FullPage bool
-	}{
-		Path:     "screenshots/logged_in.png",
-		FullPage: true,
-	})
 
 	s.Logger.Info().Msg("Login successful, next page reached")
 	s.Logger.Info().Msg("Finding the current appointment date")
