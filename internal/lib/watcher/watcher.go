@@ -59,7 +59,7 @@ func (w *Watcher) Run() error {
 		return err
 	}
 
-	w.Logger.Info().Msg("Scraper successfully find the appointment dates")
+	w.Logger.Info().Msgf("Scraper successfully find the appointment dates, current date: %s, next date: %s", scrapper.CurrentDate, scrapper.NextDate)
 
 	if !w.shouldNotify(scrapper.CurrentDate, scrapper.NextDate) {
 		w.Logger.Info().Msg("Watcher should not notify, operation stopped")

@@ -1,0 +1,8 @@
+{{ define "watcher/show/_switcher" }}
+  {{ if .IsActivated }}
+    <button hx-post="/watcher/deactivate" hx-swap="outerHTML">Deactivate</button>
+  {{ else }}
+    <button hx-post="/watcher/activate" hx-swap="outerHTML">Activate</button>
+  {{ end }}
+{{ end }}
+

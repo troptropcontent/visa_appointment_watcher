@@ -1,0 +1,27 @@
+{{ define "title" }}
+Watcher
+{{ end }}
+
+{{ define "body" }}
+<h1>Watcher</h1>
+{{ template "watcher/show/_switcher" . }}
+<p>
+	Next available appointment date: {{ .LastAppointmentDateFound }} (detected at {{ .LastAppointmentDateFoundAt }})
+</p>
+<h2>Logs</h2>
+<table>
+	<tr>
+		<th>Level</th>
+		<th>Time</th>
+		<th>Message</th>
+	</tr>
+	{{ range .Logs }}
+		<tr>
+			<td>{{ .Level }}</td>
+			<td>{{ .Time }}</td>
+			<td>{{ .Message }}</td>
+		</tr>
+	{{ end }}
+</table>
+{{ end }}
+

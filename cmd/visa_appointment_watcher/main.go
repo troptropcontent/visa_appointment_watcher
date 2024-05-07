@@ -75,6 +75,8 @@ func main() {
 	config.MustSetIfNotExists("password", password)
 	config.MustSetIfNotExists("alert_phone_number", alert_phone_number)
 	config.MustSetIfNotExists("last_alert_sent_for_appointment_date_at", "")
+	config.MustSetIfNotExists("last_appointment_date_found", "")
+	config.MustSetIfNotExists("last_alert_sent_for_appointment_date_at", "")
 
 	watcherTicker := startWatcherTicker()
 	defer watcherTicker.Stop()
@@ -82,6 +84,9 @@ func main() {
 	server := createServer()
 
 	server.Renderer = views.NewRenderer()
+
+	// Static files
+	server.Static("/public", "public")
 
 	// Health check
 	server.GET("/up", func(c echo.Context) error {
@@ -92,5 +97,7 @@ func main() {
 	watcher_web := server.Group("/watcher")
 	watcher_web.Use(authMiddleware())
 	watcher_web.GET("", watcher_handler.Show)
+	watcher_web.POST("/activate", watcher_handler.Activate)
+	watcher_web.POST("/deactivate", watcher_handler.Deactivate)
 	server.Start(":3000")
 }

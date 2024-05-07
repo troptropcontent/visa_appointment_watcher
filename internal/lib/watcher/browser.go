@@ -2,11 +2,13 @@ package watcher
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"time"
 
 	"github.com/go-rod/rod"
 	"github.com/go-rod/rod/lib/launcher"
+	"github.com/troptropcontent/visa_appointment_watcher/internal/config"
 )
 
 const HEADLESS_BROWSER_URL = "http://headlessBrowser:7317"
@@ -48,6 +50,10 @@ func NewBrowser(scrapper *Scrapper) Browser {
 			return
 		}
 
+		scrapper.Logger.Info().Msg(fmt.Sprintf("Next appointment date found: %s", parsedDate))
+
+		config.MustSet("last_appointment_date_found", parsedDate.Format("2006-01-02"))
+		config.MustSet("last_appointment_date_found_at", time.Now().Format(time.RFC3339))
 		scrapper.NextDate = parsedDate
 	})
 
