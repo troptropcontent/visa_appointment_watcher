@@ -28,12 +28,14 @@ type Element struct {
 }
 
 func gettHeadlessBrowserURL() string {
-	host := os.Getenv("HEADLESS_BROWSER_HOST")
-	if host == "" {
-		host = "headlessBrowser"
+	env := os.Getenv("GO_ENV")
+	if env == "production" {
+		host := os.Getenv("HEADLESS_BROWSER_HOST")
+		return fmt.Sprintf("https://%s", host)
 	}
-	return fmt.Sprintf("http://%s:7317", host)
+	return HEADLESS_BROWSER_URL
 }
+
 func NewBrowser(scrapper *Scrapper) Browser {
 	launcher := launcher.MustNewManaged(gettHeadlessBrowserURL())
 
