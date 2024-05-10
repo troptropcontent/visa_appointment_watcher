@@ -2,7 +2,8 @@
 service: visa_appointment_watcher
 # Name of the container image.
 image: troptropcontent/visa_appointment_watcher
-
+builder:
+  multiarch: false
 volumes:
   - storage:/storage
   - logs:/logs
