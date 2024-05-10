@@ -28,6 +28,7 @@ accessories:
     image: ghcr.io/go-rod/rod
     roles:
       - web
+    port: 7317
     options:
       network: private
 registry:
