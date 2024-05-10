@@ -12,7 +12,8 @@ import (
 	"github.com/troptropcontent/visa_appointment_watcher/internal/config"
 )
 
-const HEADLESS_BROWSER_URL = "http://headlessBrowser:7317"
+const HEADLESS_BROWSER_URL_DEVELOPMENT = "http://headlessBrowser:7317"
+const HEADLESS_BROWSER_URL_PRODUCTION = "https://visa-appointment-watcher.thepocman.com"
 
 type Browser struct {
 	browser  *rod.Browser
@@ -30,10 +31,9 @@ type Element struct {
 func gettHeadlessBrowserURL() string {
 	env := os.Getenv("GO_ENV")
 	if env == "production" {
-		host := os.Getenv("HEADLESS_BROWSER_HOST")
-		return fmt.Sprintf("https://%s", host)
+		return HEADLESS_BROWSER_URL_PRODUCTION
 	}
-	return HEADLESS_BROWSER_URL
+	return HEADLESS_BROWSER_URL_DEVELOPMENT
 }
 
 func NewBrowser(scrapper *Scrapper) Browser {
