@@ -16,5 +16,5 @@ ENV VISA_APPOINTMENT_WATCHER_ALERT_PHONE_NUMBER=$VISA_APPOINTMENT_WATCHER_ALERT_
 RUN go build -o /app/visa_appointment_watcher cmd/visa_appointment_watcher/main.go
 
 EXPOSE 3000
-CMD ["visa_appointment_watcher"]
+CMD ["/app/visa_appointment_watcher"]
 
