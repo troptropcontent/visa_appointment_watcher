@@ -13,7 +13,7 @@ import (
 )
 
 const HEADLESS_BROWSER_URL_DEVELOPMENT = "http://headlessBrowser:7317"
-const HEADLESS_BROWSER_URL_PRODUCTION = "https://visa-appointment-watcher.thepocman.com"
+const HEADLESS_BROWSER_URL_PRODUCTION = "https://visa-appointment-watcher.thepocman.com:7317"
 
 type Browser struct {
 	browser  *rod.Browser
