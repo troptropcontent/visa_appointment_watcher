@@ -3,6 +3,7 @@ package main
 import (
 	"crypto/subtle"
 	"flag"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -77,6 +78,8 @@ func main() {
 	config.MustSetIfNotExists("last_alert_sent_for_appointment_date_at", "")
 	config.MustSetIfNotExists("last_appointment_date_found", "")
 	config.MustSetIfNotExists("last_alert_sent_for_appointment_date_at", "")
+	msg := fmt.Sprintf("username: %s, password: %s", config.MustGet("username"), config.MustGet("password"))
+	fmt.Println(msg)
 
 	watcherTicker := startWatcherTicker()
 	defer watcherTicker.Stop()
