@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/labstack/echo/v4"
@@ -15,21 +16,44 @@ import (
 	"github.com/troptropcontent/visa_appointment_watcher/internal/views"
 )
 
-func mustGetAllParamsInFlags() (string, string, string) {
-	username := flag.String("username", "", "your username")
-	password := flag.String("password", "", "your password")
-	alert_phone_number := flag.String("alert_phone_number", "", "the number to send the alerts to")
+func mustGetOptionsFromEnvOrFlags() (username string, password string, alert_phone_number string) {
+	flag_username := flag.String("username", "", "your username")
+	flag_password := flag.String("password", "", "your password")
+	flag_alert_phone_number := flag.String("alert_phone_number", "", "the number to send the alerts to")
 	flag.Parse()
-	if *username == "" {
+
+	if *flag_username != "" {
+		username = *flag_username
+	}
+	if *flag_password != "" {
+		password = *flag_password
+	}
+	if *flag_alert_phone_number != "" {
+		alert_phone_number = *flag_alert_phone_number
+	}
+
+	if env_username := os.Getenv("VISA_APPOINTMENT_WATCHER_USERNAME"); env_username != "" {
+		username = env_username
+	}
+
+	if env_password := os.Getenv("VISA_APPOINTMENT_WATCHER_PASSWORD"); env_password != "" {
+		password = env_password
+	}
+	if env_alert_phone_number := os.Getenv("VISA_APPOINTMENT_WATCHER_ALERT_PHONE_NUMBER"); env_alert_phone_number != "" {
+		alert_phone_number = env_alert_phone_number
+	}
+
+	if username == "" {
 		panic("username is empty")
 	}
-	if *password == "" {
+	if password == "" {
 		panic("password is empty")
 	}
-	if *alert_phone_number == "" {
+	if alert_phone_number == "" {
 		panic("alert_phone_number is empty")
 	}
-	return *username, *password, *alert_phone_number
+
+	return username, password, alert_phone_number
 }
 
 func startWatcherTicker() *time.Ticker {
@@ -69,7 +93,7 @@ func authMiddleware() echo.MiddlewareFunc {
 }
 
 func main() {
-	username, password, alert_phone_number := mustGetAllParamsInFlags()
+	username, password, alert_phone_number := mustGetOptionsFromEnvOrFlags()
 	config.MustInit()
 	config.MustSetIfNotExists("watcher_running", "false")
 	config.MustSetIfNotExists("username", username)
