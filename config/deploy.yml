@@ -4,9 +4,6 @@ service: visa_appointment_watcher
 image: troptropcontent/visa_appointment_watcher
 builder:
   multiarch: false
-volumes:
-  - storage:/storage
-  - logs:/logs
 servers:
   web:
     env:  
@@ -22,6 +19,9 @@ servers:
       traefik.http.routers.visa_appointment_watcher.rule: Host(`visa-appointment-watcher.thepocman.com`)
       traefik.http.routers.visa_appointment_watcher.tls: "true"
       traefik.http.routers.visa_appointment_watcher.tls.certresolver: letsencrypt
+    volumes:
+      - storage:/storage
+      - logs:/logs
 accessories:
   headless_browser:
     image: ghcr.io/go-rod/rod
