@@ -1,6 +1,7 @@
 package config
 
 import (
+	"errors"
 	"path/filepath"
 	"runtime"
 
@@ -25,9 +26,11 @@ func findRootDir() string {
 // Init initializes the config database, it returns an error if it fails
 func Init() error {
 	ROOT_DIR = findRootDir()
-	db, err := gorm.Open(sqlite.Open(ROOT_DIR+"/storage/config.db"), &gorm.Config{})
+	database_file := filepath.Join(ROOT_DIR, "storage", "config.db")
+	db, err := gorm.Open(sqlite.Open(database_file), &gorm.Config{})
 	if err != nil {
-		return err
+		error_msg := "database file : " + database_file + ", Error: " + err.Error()
+		return errors.New(error_msg)
 	}
 
 	err = db.AutoMigrate(&Config{})
