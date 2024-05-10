@@ -1,4 +1,4 @@
- push# Name of your application. Used to uniquely configure containers.
+# Name of your application. Used to uniquely configure containers.
 service: visa_appointment_watcher
 # Name of the container image.
 image: troptropcontent/visa_appointment_watcher
@@ -7,13 +7,13 @@ builder:
 volumes:
   - storage:/storage
   - logs:/logs
-env:  
-  HEADLESS_BROWSER_HOST: "${HEADLESS_BROWSER_HOST}"
-  VISA_APPOINTMENT_WATCHER_USERNAME: "${VISA_APPOINTMENT_WATCHER_USERNAME}"
-  VISA_APPOINTMENT_WATCHER_PASSWORD: "${VISA_APPOINTMENT_WATCHER_PASSWORD}"
-  VISA_APPOINTMENT_WATCHER_ALERT_PHONE_NUMBER: "${VISA_APPOINTMENT_WATCHER_ALERT_PHONE_NUMBER}"
 servers:
   web:
+    env:  
+      HEADLESS_BROWSER_HOST: "${HEADLESS_BROWSER_HOST}"
+      VISA_APPOINTMENT_WATCHER_USERNAME: "${VISA_APPOINTMENT_WATCHER_USERNAME}"
+      VISA_APPOINTMENT_WATCHER_PASSWORD: "${VISA_APPOINTMENT_WATCHER_PASSWORD}"
+      VISA_APPOINTMENT_WATCHER_ALERT_PHONE_NUMBER: "${VISA_APPOINTMENT_WATCHER_ALERT_PHONE_NUMBER}"
     hosts:
       - 51.68.196.119
     labels:
