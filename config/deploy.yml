@@ -2,10 +2,7 @@
 service: visa_appointment_watcher
 # Name of the container image.
 image: troptropcontent/visa_appointment_watcher
-builder:
-  remote:
-    arch: amd64
-    host: ssh://ubuntu@51.68.196.119
+
 volumes:
   - storage:/storage
   - logs:/logs
