@@ -4,6 +4,9 @@ service: visa_appointment_watcher
 image: troptropcontent/visa_appointment_watcher
 builder:
   multiarch: false
+volumes: 
+  - "storage:/app/storage"
+  - "logs:/app/logs"
 servers:
   web:
     env:  
@@ -20,9 +23,6 @@ servers:
       traefik.http.routers.visa_appointment_watcher.tls: "true"
       traefik.http.routers.visa_appointment_watcher.tls.certresolver: letsencrypt
     network: "private"
-    volumes:
-      - /storage:/storage
-      - /logs:/logs
 accessories:
   headless_browser:
     image: ghcr.io/go-rod/rod
