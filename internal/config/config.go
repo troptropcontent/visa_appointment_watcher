@@ -9,9 +9,11 @@ func SetIfNotExists(key string, value string) error {
 	if config.ID == 0 {
 		config.Key = key
 		config.Value = value
-		return DB.Save(&config).Error
+	} else {
+		config.Value = value
+
 	}
-	return nil
+	return DB.Save(&config).Error
 }
 
 // MustSetIfNotExists sets the value of a config key if it does not exist, it panics if it fails

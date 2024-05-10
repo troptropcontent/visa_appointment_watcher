@@ -1,6 +1,5 @@
 # Name of your application. Used to uniquely configure containers.
 service: visa_appointment_watcher
-
 # Name of the container image.
 image: troptropcontent/visa_appointment_watcher
 builder:
@@ -12,6 +11,9 @@ volumes:
   - logs:/logs
 servers:
   web:
+    env:
+      secret:
+        - HEADLESS_BROWSER_HOST
     hosts:
       - 51.68.196.119
     labels:
@@ -19,6 +21,12 @@ servers:
       traefik.http.routers.visa_appointment_watcher.rule: Host(`visa-appointment-watcher.thepocman.com`)
       traefik.http.routers.visa_appointment_watcher.tls: "true"
       traefik.http.routers.visa_appointment_watcher.tls.certresolver: letsencrypt
+accessories:
+  headless_browser:
+    image: ghcr.io/go-rod/rod
+    hosts:
+      - 51.68.196.119
+    port: 7317
 registry:
   username: troptropcontent
   password:

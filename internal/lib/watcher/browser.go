@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/go-rod/rod"
@@ -26,8 +27,15 @@ type Element struct {
 	Element *rod.Element
 }
 
+func gettHeadlessBrowserURL() string {
+	host := os.Getenv("HEADLESS_BROWSER_HOST")
+	if host == "" {
+		host = "headlessBrowser"
+	}
+	return fmt.Sprintf("http://%s:7317", host)
+}
 func NewBrowser(scrapper *Scrapper) Browser {
-	launcher := launcher.MustNewManaged(HEADLESS_BROWSER_URL)
+	launcher := launcher.MustNewManaged(gettHeadlessBrowserURL())
 
 	launcher.Headless(false).XVFB("--server-num=5", "--server-args=-screen 0 1600x900x16")
 
