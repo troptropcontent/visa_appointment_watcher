@@ -12,6 +12,6 @@ ENV GO_ENV=production
 
 RUN go build -o /app/visa_appointment_watcher cmd/visa_appointment_watcher/main.go
 
-EXPOSE 3000
+EXPOSE 1234
 CMD ["/app/visa_appointment_watcher"]
 
