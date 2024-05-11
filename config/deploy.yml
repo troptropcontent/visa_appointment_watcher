@@ -24,13 +24,12 @@ servers:
       traefik.http.routers.visa_appointment_watcher.tls.certresolver: letsencrypt
     network: "private"
 accessories:
-  headless_browser:
+  browser:
     image: ghcr.io/go-rod/rod
     roles:
       - web
-    port: 7317
     options:
-      network: private
+      network: "private"
 registry:
   username: troptropcontent
   password:
