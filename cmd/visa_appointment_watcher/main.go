@@ -57,7 +57,7 @@ func mustGetOptionsFromEnvOrFlags() (username string, password string, alert_pho
 }
 
 func startWatcherTicker() *time.Ticker {
-	appointment_date_ticker := time.NewTicker(45 * time.Second)
+	appointment_date_ticker := time.NewTicker(15 * time.Minute)
 	go func() {
 		for ; ; <-appointment_date_ticker.C {
 			w := watcher.New()
