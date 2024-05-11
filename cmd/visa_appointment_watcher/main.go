@@ -61,7 +61,7 @@ func startWatcherTicker() *time.Ticker {
 	go func() {
 		for ; ; <-appointment_date_ticker.C {
 			w := watcher.New()
-			w.Run()
+			// w.Run()
 		}
 	}()
 	return appointment_date_ticker
