@@ -12,6 +12,7 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/troptropcontent/visa_appointment_watcher/internal/config"
 	watcher_handler "github.com/troptropcontent/visa_appointment_watcher/internal/handler/watcher"
+	"github.com/troptropcontent/visa_appointment_watcher/internal/lib/watcher"
 	"github.com/troptropcontent/visa_appointment_watcher/internal/views"
 )
 
@@ -59,8 +60,8 @@ func startWatcherTicker() *time.Ticker {
 	appointment_date_ticker := time.NewTicker(15 * time.Minute)
 	go func() {
 		for ; ; <-appointment_date_ticker.C {
-			// w := watcher.New()
-			// w.Run()
+			w := watcher.New()
+			w.Run()
 		}
 	}()
 	return appointment_date_ticker
