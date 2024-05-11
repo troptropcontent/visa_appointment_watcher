@@ -17,7 +17,7 @@ servers:
         - VISA_APPOINTMENT_WATCHER_ALERT_PHONE_NUMBER
     hosts:
       - 51.68.196.119
-    port: 1234
+    port: 1234:1234
     labels:
       traefik.http.routers.visa_appointment_watcher.entrypoints: websecure
       traefik.http.routers.visa_appointment_watcher.rule: Host(`visa-appointment-watcher.thepocman.com`)

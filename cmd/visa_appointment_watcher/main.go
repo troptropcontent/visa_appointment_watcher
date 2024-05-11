@@ -126,5 +126,5 @@ func main() {
 	watcher_web.GET("", watcher_handler.Show)
 	watcher_web.POST("/activate", watcher_handler.Activate)
 	watcher_web.POST("/deactivate", watcher_handler.Deactivate)
-	server.Start(":3000")
+	server.Start(":1234")
 }
