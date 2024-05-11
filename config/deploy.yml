@@ -25,6 +25,9 @@ servers:
       traefik.http.routers.visa_appointment_watcher.tls.certresolver: letsencrypt
     options:
       network: "private"
+    healthcheck:
+      path: /up
+      port: 1234
 accessories:
   browser:
     image: ghcr.io/go-rod/rod
