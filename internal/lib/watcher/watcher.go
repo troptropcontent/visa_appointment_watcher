@@ -18,6 +18,10 @@ type Watcher struct {
 }
 
 func (w *Watcher) shouldNotify(current_date, next_date time.Time) bool {
+	if next_date.IsZero() {
+		return false
+	}
+
 	if current_date.Before(next_date) {
 		return false
 	}
@@ -29,11 +33,7 @@ func (w *Watcher) shouldNotify(current_date, next_date time.Time) bool {
 
 	is_next_appointment_date_already_notified := last_alert_sent_for_appointment_date_at == next_date.Format("02-01-2006")
 
-	if is_next_appointment_date_already_notified {
-		return false
-	}
-
-	return true
+	return !is_next_appointment_date_already_notified
 }
 
 func New() Watcher {
