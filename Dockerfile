@@ -11,9 +11,9 @@ COPY . .
 ENV GO_ENV=production
 
 # Install Tailwind
-RUN curl -sLO https://github.com/tailwindlabs/tailwindcss/releases/latest/download/tailwindcss-linux-arm64
-RUN chmod +x tailwindcss-linux-arm64
-RUN mv tailwindcss-linux-arm64 ./bin/tailwindcss
+RUN curl -sLO https://github.com/tailwindlabs/tailwindcss/releases/latest/download/tailwindcss-linux-x64
+RUN chmod +x tailwindcss-linux-x64
+RUN mv tailwindcss-linux-x64 ./bin/tailwindcss
 # Build the Tailwind CSS file
 RUN ./bin/tailwindcss -i ./internal/assets/stylesheets/tailwind_input.css -o ./public/css/tailwind_output.css --minify
 
