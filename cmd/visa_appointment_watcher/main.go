@@ -3,7 +3,6 @@ package main
 import (
 	"crypto/subtle"
 	"flag"
-	"fmt"
 	"net/http"
 	"os"
 	"time"
@@ -11,6 +10,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/troptropcontent/visa_appointment_watcher/internal/config"
+	"github.com/troptropcontent/visa_appointment_watcher/internal/credentials"
 	watcher_handler "github.com/troptropcontent/visa_appointment_watcher/internal/handler/watcher"
 	"github.com/troptropcontent/visa_appointment_watcher/internal/lib/watcher"
 	"github.com/troptropcontent/visa_appointment_watcher/internal/views"
@@ -102,8 +102,8 @@ func main() {
 	config.MustSetIfNotExists("last_alert_sent_for_appointment_date_at", "")
 	config.MustSetIfNotExists("last_appointment_date_found", "")
 	config.MustSetIfNotExists("last_alert_sent_for_appointment_date_at", "")
-	msg := fmt.Sprintf("username: %s, password: %s", config.MustGet("username"), config.MustGet("password"))
-	fmt.Println(msg)
+
+	credentials.MustInit()
 
 	watcherTicker := startWatcherTicker()
 	defer watcherTicker.Stop()
