@@ -12,3 +12,6 @@ storage/*.db
 
 cmd/playground/*
 
+# Tailwind
+public/css/tailwind_output.css
+
