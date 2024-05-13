@@ -18,3 +18,7 @@ else
     echo "tailwindcss installed."
 fi
 
+# Install air
+echo "Installing air..."
+go install github.com/cosmtrek/air@latest
+echo "air installed."

@@ -3,25 +3,38 @@ Watcher
 {{ end }}
 
 {{ define "body" }}
-<h1>Watcher</h1>
-{{ template "watcher/show/_switcher" . }}
-<p>
-	Next available appointment date: {{ .LastAppointmentDateFound }} (detected at {{ .LastAppointmentDateFoundAt }})
-</p>
-<h2>Logs</h2>
-<table>
-	<tr>
-		<th>Level</th>
-		<th>Time</th>
-		<th>Message</th>
-	</tr>
-	{{ range .Logs }}
-		<tr>
-			<td>{{ .Level }}</td>
-			<td>{{ .Time }}</td>
-			<td>{{ .Message }}</td>
-		</tr>
-	{{ end }}
-</table>
+<section class="flex flex-col gap-4 p-4">
+	<article class="border border-gray-200 rounded-lg grid grid-cols-12 grid-rows-3 p-4">
+		<p class="col-span-10 row-end-2">Next available date :</p>
+		<p class="col-span-10 row-start-2 row-end-3 text-3xl font-extrabold">{{ .LastAppointmentDateFound }}</p>
+		<p class="col-span-10 row-start-3 row-end-4">(detected on {{ .LastAppointmentDateFoundAt.Format "Jan 02, 2006 at 15:04 UTC" }})</p>
+		<div class="col-span-2 col-start-11 row-start-1 row-end-4 flex flex-row-reverse items-center">
+			{{ template "watcher/show/_switcher" . }}
+		</div>
+	</article>
+	<article class="border border-gray-200 rounded-lg">
+		<table class="table-auto m-4">
+			<thead class="border-b border-gray-200">
+				<tr>
+					<th colspan="3" class="p-3 text-lg text-center">Logs</th>
+				</tr>
+				<tr>
+					<th class="p-3">Level</th>
+					<th class="p-3">Time (UTC)</th>
+					<th class="p-3">Message</th>
+				</tr>
+			</thead>
+			<tbody>
+				{{ range .Logs }}
+					<tr class="border-b border-gray-200">
+						<td class='text-center {{if eq .Level "error"}}bg-red-200 text-red-500{{else if eq .Level "info"}}bg-green-200 text-green-500{{else}}bg-gray-200 text-gray-500{{end}}'>{{ .Level }}</td>
+						<td class='text-center p-3'>{{ .Time.Format "Jan 02, 2006 15:04:05" }}</td>
+						<td class='p-3'>{{ .Message }}</td>
+					</tr>
+				{{ end }}
+			</tbody>
+		</table>
+	</article>
+</section>
 {{ end }}
 
