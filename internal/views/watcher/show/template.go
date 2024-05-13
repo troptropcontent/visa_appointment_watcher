@@ -13,7 +13,7 @@ type Template struct {
 	Logs                       []Log
 	IsActivated                bool
 	LastAppointmentDateFound   string
-	LastAppointmentDateFoundAt string
+	LastAppointmentDateFoundAt time.Time
 }
 
 func (t *Template) TemplateFiles() []string {
