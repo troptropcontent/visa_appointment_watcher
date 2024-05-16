@@ -1,10 +1,13 @@
 package watcher
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
+	"net/http"
 	"regexp"
 	"strconv"
+	"sync"
 	"time"
 
 	"github.com/go-rod/rod"
@@ -58,6 +61,8 @@ func findCurrentDate(p *Page) (time.Time, error) {
 }
 
 func (s *Scrapper) FindDates() (err error) {
+	wg := sync.WaitGroup{}
+
 	username := config.MustGet("username")
 	password := config.MustGet("password")
 
@@ -81,11 +86,13 @@ func (s *Scrapper) FindDates() (err error) {
 	page.MustFindElement("input[type='password']").MustInput(password)
 	page.MustFindElement("label[for='policy_confirmed']").MustClick()
 	page.MustFindElement("input[type='submit']").MustClick()
+
+	time.Sleep(15 * time.Second)
 	page.MustWaitStable()
 
 	regex := regexp.MustCompile(`https://ais.usvisa-info.com/en-fr/niv/groups/\d+`)
 	if current_url := page.URL(); !regex.MatchString(current_url) {
-		errMessage := "next page not reached, login might have failed, credentials might be incorrect"
+		errMessage := "next page not reached, login might have failed, credentials might be incorrect. Current url: " + current_url
 		s.Logger.Error().Msg(errMessage)
 		return errors.New(errMessage)
 	}
@@ -131,6 +138,32 @@ func (s *Scrapper) FindDates() (err error) {
 
 	page.MustFindElementByText("a[href*='appointment']", "Reschedule Appointment").MustClick()
 
+	router := page.Page.HijackRequests()
+
+	router.MustAdd("*/en-fr/niv/schedule/*/appointment/days/*.json*", func(ctx *rod.Hijack) {
+		wg.Add(1)
+		defer wg.Done()
+		if err := ctx.LoadResponse(http.DefaultClient, true); err != nil {
+			return
+		}
+		responseBody := ctx.Response.Body()
+		var parsedResponse AppointmentDateResponse
+		json.Unmarshal([]byte(responseBody), &parsedResponse)
+		rawDate := parsedResponse[0].Date
+		parsedDate, err := time.Parse("2006-01-02", rawDate)
+		if err != nil {
+			return
+		}
+
+		s.Logger.Info().Msg(fmt.Sprintf("Next appointment date found: %s", parsedDate))
+
+		config.MustSet("last_appointment_date_found", parsedDate.Format("2006-01-02"))
+		config.MustSet("last_appointment_date_found_at", time.Now().Format(time.RFC3339))
+		s.NextDate = parsedDate
+	})
+
+	go router.Run()
+
 	s.Logger.Info().Msg("Reschedule appointment button clicked")
 	s.Logger.Info().Msg("Waiting for the page to be stable")
 
@@ -142,6 +175,8 @@ func (s *Scrapper) FindDates() (err error) {
 		s.Logger.Error().Msg(errMessage)
 		return errors.New(errMessage)
 	}
+
+	wg.Wait()
 
 	s.Logger.Info().Msg("Scrapper finished")
 
