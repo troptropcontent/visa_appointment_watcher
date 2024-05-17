@@ -9,11 +9,13 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"github.com/troptropcontent/visa_appointment_watcher/database"
 	"github.com/troptropcontent/visa_appointment_watcher/internal/config"
 	"github.com/troptropcontent/visa_appointment_watcher/internal/credentials"
 	watcher_handler "github.com/troptropcontent/visa_appointment_watcher/internal/handler/watcher"
 	"github.com/troptropcontent/visa_appointment_watcher/internal/lib/logging"
 	"github.com/troptropcontent/visa_appointment_watcher/internal/lib/watcher"
+	"github.com/troptropcontent/visa_appointment_watcher/internal/models"
 	"github.com/troptropcontent/visa_appointment_watcher/internal/views"
 )
 
@@ -95,9 +97,11 @@ func authMiddleware() echo.MiddlewareFunc {
 }
 
 func main() {
-	logging.Init(logging.Config{})
-	username, password, alert_phone_number := mustGetOptionsFromEnvOrFlags()
 	config.MustInit()
+	logging.Init(logging.Config{})
+	database.Init()
+	models.Init()
+	username, password, alert_phone_number := mustGetOptionsFromEnvOrFlags()
 	config.MustSetIfNotExists("watcher_running", "false")
 	config.MustSet("username", username)
 	config.MustSet("password", password)
