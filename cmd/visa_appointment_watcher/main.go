@@ -12,6 +12,7 @@ import (
 	"github.com/troptropcontent/visa_appointment_watcher/internal/config"
 	"github.com/troptropcontent/visa_appointment_watcher/internal/credentials"
 	watcher_handler "github.com/troptropcontent/visa_appointment_watcher/internal/handler/watcher"
+	"github.com/troptropcontent/visa_appointment_watcher/internal/lib/logging"
 	"github.com/troptropcontent/visa_appointment_watcher/internal/lib/watcher"
 	"github.com/troptropcontent/visa_appointment_watcher/internal/views"
 )
@@ -60,6 +61,7 @@ func startWatcherTicker() *time.Ticker {
 	appointment_date_ticker := time.NewTicker(15 * time.Minute)
 	go func() {
 		for range appointment_date_ticker.C {
+			logging.Logger.Info().Msg("Trigger a new watcher run")
 			w := watcher.New()
 			w.Run()
 		}
@@ -93,6 +95,7 @@ func authMiddleware() echo.MiddlewareFunc {
 }
 
 func main() {
+	logging.Init(logging.Config{})
 	username, password, alert_phone_number := mustGetOptionsFromEnvOrFlags()
 	config.MustInit()
 	config.MustSetIfNotExists("watcher_running", "false")

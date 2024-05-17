@@ -13,6 +13,13 @@ type Config struct {
 	Filename string
 }
 
+var Logger *zerolog.Logger
+
+func Init(config Config) {
+	logger := New(config)
+	Logger = &logger
+}
+
 func New(config Config) zerolog.Logger {
 	consoleWriter := zerolog.ConsoleWriter{
 		Out:        os.Stdout,
