@@ -18,6 +18,8 @@ servers:
         - VAW_TWILIO_ACCOUNT_SID
         - VAW_TWILIO_AUTH_TOKEN
         - VAW_TWILIO_NUMBER
+        - VAW_META_ACCOUNT_ID
+        - VAW_META_TOKEN
     hosts:
       - 51.68.196.119
     port: 1234:1234
