@@ -10,10 +10,12 @@ type Watcher struct {
 	gorm.Model
 	User                   User
 	UserId                 uint
-	Type                   int
 	NextAppointmentDate    time.Time
 	CurrentAppointmentDate time.Time
-	Phone                  string
 	IsActive               bool
 	LastRunAt              time.Time
+	WatcherConfigId        uint
+	WatcherConfig          WatcherConfig
+	CredentialsId          uint
+	Credentials            Credentials
 }
