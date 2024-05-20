@@ -66,10 +66,10 @@ func (w *Watcher) Run() error {
 		return nil
 	}
 
-	notifier := NewNotifier()
-	err = notifier.Notify(scrapper.CurrentDate, scrapper.NextDate, config.MustGet("alert_phone_number"))
+	err = Notify(scrapper.CurrentDate, scrapper.NextDate)
+
 	if err != nil {
-		w.Logger.Error().Msg("Notifier failed with the following error : " + err.Error())
+		w.Logger.Error().Msgf("Failed to notify: %s", err.Error())
 		return err
 	}
 

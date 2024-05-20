@@ -2,7 +2,6 @@ package watcher
 
 import (
 	"bytes"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -24,7 +23,6 @@ func NewWhatsappNotifier() *WhatsappNotifier {
 
 func (w *WhatsappNotifier) Notify(current_date time.Time, next_date time.Time, alert_phone_number string) error {
 	url := "https://graph.facebook.com/v19.0/" + w.metaAccountId + "/messages"
-	fmt.Println(url)
 	bearerToken := w.token
 	contentType := "application/json"
 	jsonData := `{
@@ -43,11 +41,11 @@ func (w *WhatsappNotifier) Notify(current_date time.Time, next_date time.Time, a
 					"parameters": [
 						{
 							"type": "text",
-							"text": "` + next_date.Format("02-01-2006") + `"
+							"text": "` + next_date.Format(time.DateOnly) + `"
 						},
 						{
 							"type": "text",
-							"text": "` + current_date.Format("02-01-2006") + `"
+							"text": "` + current_date.Format(time.DateOnly) + `"
 						}
 					]
 				},
@@ -56,7 +54,7 @@ func (w *WhatsappNotifier) Notify(current_date time.Time, next_date time.Time, a
 					"parameters": [
 						{
 							"type": "text",
-							"text": "` + current_date.Format("02-01-2006") + `"
+							"text": "` + current_date.Format(time.DateOnly) + `"
 						}
 					]
 				}
@@ -78,9 +76,5 @@ func (w *WhatsappNotifier) Notify(current_date time.Time, next_date time.Time, a
 		return err
 	}
 	defer resp.Body.Close()
-	fmt.Println("WhatsApp message sent successfully")
-	fmt.Println(resp)
-
 	return nil
-
 }

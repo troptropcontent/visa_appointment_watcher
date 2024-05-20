@@ -20,6 +20,12 @@ servers:
         - VAW_TWILIO_NUMBER
         - VAW_META_ACCOUNT_ID
         - VAW_META_TOKEN
+        - VAW_GOOGLE_CLIENT_ID
+        - VAW_GOOGLE_CLIENT_SECRET
+        - VAW_GOOGLE_ACCESS_TOKEN
+        - VAW_GOOGLE_REFRESH_TOKEN
+        - VAW_ADMIN_PHONE_NUMBER
+        - VAW_ADMIN_EMAIL
     hosts:
       - 51.68.196.119
     port: 1234:1234

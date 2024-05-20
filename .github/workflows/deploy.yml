@@ -23,6 +23,12 @@ jobs:
       VAW_TWILIO_AUTH_TOKEN: ${{ secrets.VAW_TWILIO_AUTH_TOKEN }}
       VAW_META_ACCOUNT_ID: ${{ secrets.VAW_META_ACCOUNT_ID }}
       VAW_META_TOKEN: ${{ secrets.VAW_META_TOKEN }}
+      VAW_GOOGLE_CLIENT_ID: ${{ secrets.VAW_GOOGLE_CLIENT_ID }}
+      VAW_GOOGLE_CLIENT_SECRET: ${{ secrets.VAW_GOOGLE_CLIENT_SECRET }}
+      VAW_GOOGLE_ACCESS_TOKEN: ${{ secrets.VAW_GOOGLE_ACCESS_TOKEN }}
+      VAW_GOOGLE_REFRESH_TOKEN: ${{ secrets.VAW_GOOGLE_REFRESH_TOKEN }}
+      VAW_ADMIN_PHONE_NUMBER: ${{ secrets.VAW_ADMIN_PHONE_NUMBER }}
+      VAW_ADMIN_EMAIL: ${{ secrets.VAW_ADMIN_EMAIL }}
 
     steps:
       - name: Checkout code
