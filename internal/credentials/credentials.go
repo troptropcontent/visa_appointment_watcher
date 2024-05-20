@@ -11,6 +11,8 @@ type Credentials struct {
 	TWILIO_ACCOUNT_SID string `validate:"required"`
 	TWILIO_AUTH_TOKEN  string `validate:"required"`
 	TWILIO_NUMBER      string `validate:"required"`
+	META_ACCOUNT_ID    string `validate:"required"`
+	META_TOKEN         string `validate:"required"`
 }
 
 var Config Credentials
@@ -22,6 +24,8 @@ func Init() error {
 		TWILIO_ACCOUNT_SID: viper.GetString("TWILIO_ACCOUNT_SID"),
 		TWILIO_AUTH_TOKEN:  viper.GetString("TWILIO_AUTH_TOKEN"),
 		TWILIO_NUMBER:      viper.GetString("TWILIO_NUMBER"),
+		META_ACCOUNT_ID:    viper.GetString("META_ACCOUNT_ID"),
+		META_TOKEN:         viper.GetString("META_TOKEN"),
 	}
 	err := validator.New().Struct(Config)
 	if err != nil {
