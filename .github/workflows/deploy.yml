@@ -21,6 +21,8 @@ jobs:
       VAW_TWILIO_NUMBER: ${{ secrets.VAW_TWILIO_NUMBER }}
       VAW_TWILIO_ACCOUNT_SID: ${{ secrets.VAW_TWILIO_ACCOUNT_SID }}
       VAW_TWILIO_AUTH_TOKEN: ${{ secrets.VAW_TWILIO_AUTH_TOKEN }}
+      VAW_META_ACCOUNT_ID: ${{ secrets.VAW_META_ACCOUNT_ID }}
+      VAW_META_TOKEN: ${{ secrets.VAW_META_TOKEN }}
 
     steps:
       - name: Checkout code
