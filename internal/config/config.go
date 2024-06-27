@@ -1,6 +1,11 @@
 package config
 
-import "errors"
+import (
+	"errors"
+
+	"github.com/go-playground/validator/v10"
+	"github.com/spf13/viper"
+)
 
 // SetIfNotExists sets the value of a config key if it does not exist, it returns an error if it fails
 func SetIfNotExists(key string, value string) error {
@@ -56,6 +61,39 @@ func Set(key string, value string) error {
 // MustSet sets the value of a config key, it panics if it fails
 func MustSet(key string, value string) {
 	err := Set(key, value)
+	if err != nil {
+		panic(err)
+	}
+}
+
+var Constants struct {
+	ENV string `validate:"required,oneof=development production test"`
+}
+
+func Load() error {
+	viper.AutomaticEnv()
+	viper.SetEnvPrefix("VAW")
+
+	Constants.ENV = viper.GetString("ENV")
+
+	err := validator.New().Struct(Constants)
+	if err != nil {
+		validationErrors := err.(validator.ValidationErrors)
+		err_message := "Missing credential: "
+		for i, err := range validationErrors {
+			err_message += err.Field()
+			if i < len(validationErrors)-1 {
+				err_message += ", "
+			}
+		}
+
+		return errors.New(err_message)
+	}
+	return nil
+}
+
+func MustLoad() {
+	err := Load()
 	if err != nil {
 		panic(err)
 	}
