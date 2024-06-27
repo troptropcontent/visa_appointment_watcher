@@ -9,7 +9,12 @@ import (
 var DB *gorm.DB
 
 func Init() {
-	db, err := gorm.Open(sqlite.Open(config.ROOT_DIR+"/storage/database.db"), &gorm.Config{})
+
+	dbPath := config.ROOT_DIR + "/storage/database.db"
+	if config.Constants.ENV == "test" {
+		dbPath = config.ROOT_DIR + "/storage/test_database.db"
+	}
+	db, err := gorm.Open(sqlite.Open(dbPath), &gorm.Config{})
 	if err != nil {
 		panic("failed to connect database")
 	}
