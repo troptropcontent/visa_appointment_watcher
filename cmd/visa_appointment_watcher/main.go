@@ -16,6 +16,7 @@ import (
 	"github.com/troptropcontent/visa_appointment_watcher/internal/lib/logging"
 	"github.com/troptropcontent/visa_appointment_watcher/internal/lib/watcher"
 	"github.com/troptropcontent/visa_appointment_watcher/internal/models"
+	auth_api "github.com/troptropcontent/visa_appointment_watcher/internal/modules/auth/api"
 	"github.com/troptropcontent/visa_appointment_watcher/internal/views"
 )
 
@@ -133,5 +134,9 @@ func main() {
 	watcher_web.GET("", watcher_handler.Show)
 	watcher_web.POST("/activate", watcher_handler.Activate)
 	watcher_web.POST("/deactivate", watcher_handler.Deactivate)
+
+	// Auth endpoints
+	auth_api.RegisterRoutes(server)
+
 	server.Start(":1234")
 }
