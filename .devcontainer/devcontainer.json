@@ -12,6 +12,7 @@
 		"ghcr.io/devcontainers/features/docker-in-docker:2": {}
 	},
 	"postCreateCommand": "bash .devcontainer/post-create.sh",
+	"onCreateCommand": "echo 'Hello, World!'",
 	"customizations": {
 		"vscode": {
 			"extensions": [

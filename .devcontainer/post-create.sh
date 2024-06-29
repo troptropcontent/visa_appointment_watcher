@@ -22,3 +22,12 @@ fi
 echo "Installing air..."
 go install github.com/cosmtrek/air@latest
 echo "air installed."
+
+# Ensure that the git repo is recognized as safe
+echo "Ensuring that the git repo is recognized as safe..."
+git config --global --add safe.directory $(pwd)
+echo "git repo is recognized as safe."
+echo "Setting git username and email..."
+git config --global user.name $GIT_USER_NAME
+git config --global user.email $GIT_USER_EMAIL
+echo "git username and email set."
